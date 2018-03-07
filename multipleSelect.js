@@ -130,7 +130,15 @@ export default class CustomMultiPicker extends Component {
         <ScrollView
           style={[{ padding: 5, height: this.props.scrollViewHeight }, this.props.scrollViewStyle]}
         >
-          {labels.map((label, index) => {
+          {labels.map((object, index) => {
+            let label = object
+            let item = null
+
+            if (object.label) {
+              label = object.label
+              item = object
+            }
+
             const itemKey = returnValue == "label" ? label : values[index]
             return(
               <TouchableOpacity
@@ -154,18 +162,25 @@ export default class CustomMultiPicker extends Component {
                   this._onSelect(itemKey)
                 }}
               >
-                <Text>{label}</Text>
-                {
+              {
+                (!this.props.renderItem || !item) &&
+                  <Text>{label}</Text>
+                  {
 
-                  this._isSelected(itemKey) ?
-                  <Icon name={this.props.selectedIconName}
-                        style={[{color: this.props.iconColor, fontSize: this.props.iconSize}, this.props.selectedIconStyle]}
-                        />
-                  :
-                  <Icon name={this.props.unselectedIconName}
-                        style={[{color: this.props.iconColor, fontSize: this.props.iconSize}, this.props.unselectedIconStyle]}
-                        />
-                }
+                    this._isSelected(itemKey) ?
+                    <Icon name={this.props.selectedIconName}
+                          style={[{color: this.props.iconColor, fontSize: this.props.iconSize}, this.props.selectedIconStyle]}
+                          />
+                    :
+                    <Icon name={this.props.unselectedIconName}
+                          style={[{color: this.props.iconColor, fontSize: this.props.iconSize}, this.props.unselectedIconStyle]}
+                          />
+                  }
+              }
+              {
+                this.props.renderItem && item &&
+                  this.props.renderItem(item, this._isSelected(itemKey))
+              }
               </TouchableOpacity>
             )
           })}
